@@ -15,6 +15,24 @@ name: OpenWrt Builder
 on:
   repository_dispatch:
   workflow_dispatch:
+    inputs:
+      ssh:
+        description: 'SSH connection to Actions'
+        required: true
+        default: 'true'
+        type: choice
+        options:
+          - true
+          - false
+      source:
+        type: choice
+        description: Select Source.
+        required: true
+        default: openwrt
+        options:
+        - openwrt
+        - immortalwrt
+
 
 env:
   REPO_URL: https://github.com/lkiuyu/immortalwrt
@@ -23,10 +41,10 @@ env:
   CONFIG_FILE: .config
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
-  UPLOAD_BIN_DIR: false
+  UPLOAD_BIN_DIR: true
   UPLOAD_FIRMWARE: true
-  UPLOAD_RELEASE: false
-  TZ: Asia/Shanghai
+  UPLOAD_RELEASE: true
+  TZ: Asia/Jakarta
 
 jobs:
   build:
@@ -54,7 +72,12 @@ jobs:
       working-directory: /workdir
       run: |
         df -hT $PWD
-        git clone $REPO_URL -b $REPO_BRANCH openwrt
+        if [ ${{ inputs.source }} == 'openwrt' ]; then
+          REPO_URL='https://github.com/lkiuyu/openwrt-ufi'
+        elif [ ${{ inputs.source }} == 'immortalwrt' ]; then
+          REPO_URL='https://github.com/lkiuyu/immortalwrt'
+        fi
+        git clone --depth=1 $REPO_URL openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
     - name: Load custom feeds
@@ -87,12 +110,18 @@ jobs:
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
 
+    - name: SSH connection to Actions
+      uses: csexton/debugger-action@master
+      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
+      
     - name: Compile the firmware
       id: compile
       run: |
         cd openwrt
         echo -e "$(nproc) thread compile"
-        make -j$(nproc) || make -j1 || make -j1 V=s
+        if [ ${{ inputs.ssh }} == "false" ]; then
+          make -j$(nproc) || make -j1 || make -j1 V=s
+        fi
         echo "status=success" >> $GITHUB_OUTPUT
         grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
