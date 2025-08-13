@@ -28,10 +28,11 @@ on:
         type: choice
         description: Select Source.
         required: true
-        default: 'immortalwrt'
+        default: 'armv7'
         options:
         - openwrt
         - immortalwrt
+        - armv7
 
 
 env:
@@ -71,11 +72,12 @@ jobs:
       run: |
         df -hT $PWD
         if [ ${{ inputs.source }} == 'openwrt' ]; then
-          REPO_URL='https://github.com/lkiuyu/openwrt-ufi'
+          git clone --depth=1 https://github.com/lkiuyu/openwrt-ufi openwrt
         elif [ ${{ inputs.source }} == 'immortalwrt' ]; then
-          REPO_URL='https://github.com/lkiuyu/immortalwrt'
+          git clone --depth=1 https://github.com/lkiuyu/immortalwrt openwrt
+        else
+          git clone --depth=1 -b msm8916 --single-branch https://github.com/feryw/immortalwrt openwrt
         fi
-        git clone --depth=1 $REPO_URL openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
     - name: Load custom feeds
