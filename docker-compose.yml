@@ -20,15 +20,15 @@ services:
     tty: true
     volumes:
       - .:/repo
-      # - ./packages:/home/builder/openwrt/package/uz801
-      # - ./kernel-6.1:/home/builder/openwrt/include/kernel-6.1:ro
-      # - ./feeds.conf.default:/home/builder/openwrt/feeds.conf.default:ro
+      - ./packages:/home/builder/openwrt/package/uz801
+      - ./feeds.conf.default:/home/builder/openwrt/feeds.conf.default:ro
       # - ./msm89xx:/home/builder/openwrt/target/linux/msm89xx
-      - ./bin:/home/builder/openwrt/bin:builder
-      # - ./files:/home/builder/openwrt/files
+      - ./msm8916.mk:/home/builder/openwrt/target/linux/msm89xx/image/msm8916.mk
+      - ./bin:/home/builder/openwrt/bin
+       - ./files:/home/builder/openwrt/files
       # - ./diffconfig:/home/builder/openwrt/.config
-      - openwrt-dl:/home/builder/openwrt/dl:builder
-      - openwrt-build-dir:/home/builder/openwrt/build_dir:builder
+      - openwrt-dl:/home/builder/openwrt/dl
+      - openwrt-build-dir:/home/builder/openwrt/build_dir
     command: ["/bin/bash"]
     depends_on:
       chown-fix:
