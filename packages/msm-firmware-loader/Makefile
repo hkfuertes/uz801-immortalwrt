@@ -29,9 +29,6 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./msm-firmware-loader.init $(1)/etc/init.d/msm-firmware-loader
 	
-	$(INSTALL_DIR) $(1)/etc/hotplug.d/firmware
-	$(INSTALL_BIN) ./msm-firmware-loader.hotplug $(1)/etc/hotplug.d/firmware/99-qcom-loader
-	
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/msm-firmware-loader.sh $(1)/usr/sbin/msm-firmware-loader
 endef

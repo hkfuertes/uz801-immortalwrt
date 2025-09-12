@@ -56,15 +56,17 @@ FROM base
 RUN git clone --depth=1 https://github.com/lkiuyu/immortalwrt openwrt
 
 # Restoring default feeds.
-COPY feeds.conf.default openwrt/
+COPY mods/feeds.conf.default openwrt/
 
 RUN openwrt/scripts/feeds update -a && \
     openwrt/scripts/feeds install -a
 
 # Adding my customizations.
-COPY image_msm8916.mk openwrt/target/linux/msm89xx/image/msm8916.mk
-COPY extra_msm8916.sh openwrt/
-RUN chmod +x openwrt/extra_msm8916.sh &&\
-    openwrt/extra_msm8916.sh
+COPY mods/image_msm8916.mk openwrt/target/linux/msm89xx/image/msm8916.mk
+COPY mods/extra_msm8916.sh openwrt/
+
+RUN cd openwrt && \
+    ./extra_msm8916.sh && \
+    rm -rf ./extra_msm8916.sh
 
 CMD ["/bin/bash"]
