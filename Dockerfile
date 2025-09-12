@@ -53,7 +53,7 @@ WORKDIR /home/builder
 
 FROM base
 
-RUN git clone --depth=1 https://github.com/lkiuyu/immortalwrt openwrt &&  cd openwrt && \
+RUN git clone --revision=b08962bcb724964820a772e42b508f14b673282b --depth=1 https://github.com/lkiuyu/immortalwrt openwrt &&  cd openwrt && \
     ./scripts/feeds update -a && \
     ./scripts/feeds install -a
 
