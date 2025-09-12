@@ -21,12 +21,8 @@ services:
     volumes:
       - .:/repo
       - ./packages:/home/builder/openwrt/package/uz801
-      - ./feeds.conf.default:/home/builder/openwrt/feeds.conf.default:ro
-      # - ./msm89xx:/home/builder/openwrt/target/linux/msm89xx
-      - ./msm8916/image_msm8916.mk:/home/builder/openwrt/target/linux/msm89xx/image/msm8916.mk
-      - ./msm8916/config-6.12:/home/builder/openwrt/target/linux/msm89xx/
       - ./bin:/home/builder/openwrt/bin
-       - ./files:/home/builder/openwrt/files
+      - ./files:/home/builder/openwrt/files
       # - ./diffconfig:/home/builder/openwrt/.config
       - openwrt-dl:/home/builder/openwrt/dl
       - openwrt-build-dir:/home/builder/openwrt/build_dir
