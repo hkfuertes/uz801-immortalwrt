@@ -1,0 +1,9 @@
+#!/bin/sh
+[ "$ACTION" = "add" ] || exit 0
+case "$DEVPATH" in
+  *remoteproc/remoteproc*)
+    echo start > /sys/class/remoteproc/remoteproc0/state 2>/dev/null || true
+    echo start > /sys/class/remoteproc/remoteproc1/state 2>/dev/null || true
+    wifi reload 2>/dev/null || true
+  ;;
+esac

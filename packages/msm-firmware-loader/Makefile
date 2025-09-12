@@ -29,6 +29,9 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./msm-firmware-loader.init $(1)/etc/init.d/msm-firmware-loader
 	
+	$(INSTALL_DIR) $(1)/etc/hotplug.d/firmware
+	$(INSTALL_BIN) ./remoteproc-start.hotplug $(1)/etc/hotplug.d/platform/95-remoteproc-start
+	
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/msm-firmware-loader.sh $(1)/usr/sbin/msm-firmware-loader
 endef
