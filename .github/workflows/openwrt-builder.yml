@@ -24,16 +24,6 @@ on:
         options:
           - true
           - false
-      source:
-        type: choice
-        description: Select Source.
-        required: true
-        default: 'armv7'
-        options:
-        - openwrt
-        - immortalwrt
-        - armv7
-
 
 env:
   FEEDS_CONF: feeds.conf.default
@@ -42,8 +32,8 @@ env:
   DIY_P2_SH: diy-part2.sh
   UPLOAD_BIN_DIR: true
   UPLOAD_FIRMWARE: true
-  UPLOAD_RELEASE: true
-  TZ: Asia/Jakarta
+  UPLOAD_RELEASE: false
+  TZ: Europe/Madrid
 
 jobs:
   build:
@@ -71,13 +61,7 @@ jobs:
       working-directory: /workdir
       run: |
         df -hT $PWD
-        if [ ${{ inputs.source }} == 'openwrt' ]; then
-          git clone --depth=1 https://github.com/lkiuyu/openwrt-ufi openwrt
-        elif [ ${{ inputs.source }} == 'immortalwrt' ]; then
-          git clone --depth=1 https://github.com/lkiuyu/immortalwrt openwrt
-        else
-          git clone --depth=1 -b msm8916 --single-branch https://github.com/feryw/immortalwrt openwrt
-        fi
+        git clone --depth=1 https://github.com/lkiuyu/immortalwrt openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
     - name: Load custom feeds

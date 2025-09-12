@@ -1,0 +1,39 @@
+services:
+  chown-fix:
+    image: alpine:latest
+    command: >
+      sh -c "chown -R 1000:1000 /home/builder/openwrt/dl /home/builder/openwrt/bin /home/builder/openwrt/build_dir"
+    volumes:
+      - ./bin:/home/builder/openwrt/bin
+      - openwrt-dl:/home/builder/openwrt/dl
+      - openwrt-build-dir:/home/builder/openwrt/build_dir
+    user: root
+    restart: "no"
+    
+  builder:
+    user: builder
+    build: .
+    image: openwrt-builder:latest
+    container_name: openwrt-builder
+    working_dir: /home/builder/openwrt
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/repo
+      - ./packages:/home/builder/openwrt/package/uz801
+      # - ./kernel-6.1:/home/builder/openwrt/include/kernel-6.1:ro
+      # - ./feeds.conf.default:/home/builder/openwrt/feeds.conf.default:ro
+      - ./msm89xx:/home/builder/openwrt/target/linux/msm89xx
+      - ./bin:/home/builder/openwrt/bin:builder
+      # - ./files:/home/builder/openwrt/files
+      # - ./diffconfig:/home/builder/openwrt/.config
+      - openwrt-dl:/home/builder/openwrt/dl:builder
+      - openwrt-build-dir:/home/builder/openwrt/build_dir:builder
+    command: ["/bin/bash"]
+    depends_on:
+      chown-fix:
+        condition: service_completed_successfully
+
+volumes:
+  openwrt-dl:
+  openwrt-build-dir:
